@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 import { downsampleReadings, type TempReading } from "@/lib/temperature-data";
 
@@ -40,7 +41,15 @@ function ChartTooltip({
   );
 }
 
-export default function ChartOverview({ data }: { data: TempReading[] }) {
+export default function ChartOverview({
+  data,
+  thresholdWarning,
+  thresholdCritical,
+}: {
+  data: TempReading[];
+  thresholdWarning: number;
+  thresholdCritical: number;
+}) {
   const chartData = downsampleReadings(data);
   return (
     <div className="rounded-[8px] border border-[#E5E7EB] bg-white p-3 shadow-subtle">
@@ -52,7 +61,7 @@ export default function ChartOverview({ data }: { data: TempReading[] }) {
       </div>
       <div className="mt-3 h-[250px]">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={chartData} margin={{ top: 4, right: 0, left: -18, bottom: 0 }}>
+          <AreaChart data={chartData} margin={{ top: 14, right: 0, left: -18, bottom: 0 }}>
             <defs>
               <linearGradient id="ov-grad-suhu" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#EF4444" stopOpacity={0.15} />
@@ -75,6 +84,18 @@ export default function ChartOverview({ data }: { data: TempReading[] }) {
               domain={[30, 40]}
             />
             <Tooltip content={<ChartTooltip />} />
+            <ReferenceLine
+              y={thresholdCritical}
+              stroke="#EF4444"
+              strokeDasharray="4 4"
+              label={{ value: `Critical ${thresholdCritical}°C`, position: "right", fill: "#EF4444", fontSize: 9, fontFamily: "DM Sans" }}
+            />
+            <ReferenceLine
+              y={thresholdWarning}
+              stroke="#F59E0B"
+              strokeDasharray="4 4"
+              label={{ value: `Warning ${thresholdWarning}°C`, position: "right", fill: "#F59E0B", fontSize: 9, fontFamily: "DM Sans" }}
+            />
             <Area
               type="monotone"
               dataKey="suhu"

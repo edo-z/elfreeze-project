@@ -16,8 +16,9 @@ const char* password = "alfarezzganteng";
 // Buzzer
 #define BUZZER_PIN  14
 
-// Threshold
-const float batasSuhu = 35.0;
+// Threshold (default, bisa di-override via MQTT config)
+float configWarning = 35.0;
+float configCritical = 38.0;
 
 // Running text
 const char* companyText = "PT ELFREZEE TECH";

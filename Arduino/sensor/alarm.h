@@ -10,7 +10,13 @@ void initAlarm() {
 }
 
 void cekAlarm(float suhu) {
-    digitalWrite(BUZZER_PIN, suhu >= batasSuhu ? HIGH : LOW);
+    if (suhu >= configCritical) {
+        digitalWrite(BUZZER_PIN, (millis() % 200 < 100) ? HIGH : LOW);
+    } else if (suhu >= configWarning) {
+        digitalWrite(BUZZER_PIN, (millis() % 1000 < 500) ? HIGH : LOW);
+    } else {
+        digitalWrite(BUZZER_PIN, LOW);
+    }
 }
 
 #endif

@@ -57,7 +57,7 @@ void drawSuhu(float suhu) {
 void drawStatus(float suhu, bool blinkState) {
     display.setTextSize(1);
 
-    if (suhu >= batasSuhu) {
+    if (suhu >= configWarning) {
         if (blinkState) {
             display.fillCircle(118, 35, 4, SH110X_WHITE);
         }

@@ -9,6 +9,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  ReferenceLine,
 } from "recharts";
 import { downsampleReadings, type TempReading } from "@/lib/temperature-data";
 
@@ -42,7 +43,15 @@ function ChartTooltip({
   );
 }
 
-export default function ChartComparison({ data }: { data: TempReading[] }) {
+export default function ChartComparison({
+  data,
+  thresholdWarning,
+  thresholdCritical,
+}: {
+  data: TempReading[];
+  thresholdWarning: number;
+  thresholdCritical: number;
+}) {
   const downsampled = downsampleReadings(data);
   const sampled = HOURS_SAMPLE.map((i) => downsampled[i]).filter(Boolean);
 
@@ -56,7 +65,7 @@ export default function ChartComparison({ data }: { data: TempReading[] }) {
       </div>
       <div className="mt-3 h-[250px]">
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={sampled} margin={{ top: 4, right: 0, left: -18, bottom: 0 }}>
+          <BarChart data={sampled} margin={{ top: 14, right: 0, left: -18, bottom: 0 }}>
             <CartesianGrid stroke="#E5E7EB" strokeDasharray="2 2" />
             <XAxis
               dataKey="time"
@@ -72,6 +81,18 @@ export default function ChartComparison({ data }: { data: TempReading[] }) {
               domain={[30, 40]}
             />
             <Tooltip content={<ChartTooltip />} />
+            <ReferenceLine
+              y={thresholdCritical}
+              stroke="#EF4444"
+              strokeDasharray="4 4"
+              label={{ value: `Critical ${thresholdCritical}°C`, position: "right", fill: "#EF4444", fontSize: 9, fontFamily: "DM Sans" }}
+            />
+            <ReferenceLine
+              y={thresholdWarning}
+              stroke="#F59E0B"
+              strokeDasharray="4 4"
+              label={{ value: `Warning ${thresholdWarning}°C`, position: "right", fill: "#F59E0B", fontSize: 9, fontFamily: "DM Sans" }}
+            />
             <Bar
               dataKey="suhu"
               name="Temperature"

@@ -453,4 +453,26 @@ void subscribeOTATopic() {
     subscribeMQTT(topic.c_str(), 0);
 }
 
+void subscribeConfigTopic() {
+    String deviceId = getDeviceId();
+    String topic = String(TOPIC_PREFIX) + "/" + deviceId + "/config";
+    subscribeMQTT(topic.c_str(), 0);
+}
+
+void handleConfigMessage(String &topic, String &payload) {
+    if (!topic.endsWith("/config")) return;
+
+    int wIdx = payload.indexOf("\"warning\"");
+    int cIdx = payload.indexOf("\"critical\"");
+    if (wIdx >= 0) {
+        float val = payload.substring(payload.indexOf(':', wIdx) + 1).toFloat();
+        configWarning = val;
+    }
+    if (cIdx >= 0) {
+        float val = payload.substring(payload.indexOf(':', cIdx) + 1).toFloat();
+        configCritical = val;
+    }
+    Serial.printf("[CONFIG] warning=%.1f critical=%.1f\n", configWarning, configCritical);
+}
+
 #endif

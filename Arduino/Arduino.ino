@@ -14,6 +14,10 @@ bool blinkState = false;
 
 bool prevMqttConnected = false;
 
+void mqttMessageHandler(String &topic, String &payload) {
+    handleConfigMessage(topic, payload);
+}
+
 void setup() {
     Serial.begin(115200);
     randomSeed(millis());
@@ -48,6 +52,7 @@ void setup() {
     Serial.println(deviceId);
 
     setupMQTT();
+    setMqttCallback(mqttMessageHandler);
     setupOTA();
 
     delay(1000);
@@ -67,6 +72,7 @@ void loop() {
 
     if (!prevMqttConnected && mqttConnected) {
         subscribeOTATopic();
+        subscribeConfigTopic();
         reportDeviceInfo();
     }
     prevMqttConnected = mqttConnected;
@@ -82,7 +88,7 @@ void loop() {
     Serial.print(jam);
     Serial.print(" | Suhu : ");
     Serial.print(suhu, 1);
-    Serial.println(suhu >= batasSuhu ? " C | WARNING" : " C | NORMAL");
+    Serial.println(suhu >= configWarning ? " C | WARNING" : " C | NORMAL");
 
     // Alarm
     cekAlarm(suhu);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { pushReading } from "@/lib/ring-buffer";
+import { setLastDeviceId } from "@/lib/last-device";
 
 export async function POST(request: NextRequest) {
   try {
@@ -11,6 +12,13 @@ export async function POST(request: NextRequest) {
     }
 
     pushReading(suhu);
+
+    const deviceId = body.deviceId ?? body.topic?.split("/")?.[1];
+    if (deviceId) {
+      setLastDeviceId(deviceId);
+      console.log(`[DEVICE] Captured deviceId: ${deviceId}`);
+    }
+
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ error: "Invalid JSON" }, { status: 400 });
