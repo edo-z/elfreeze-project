@@ -16,5 +16,5 @@ export function publishThresholds(deviceId: string, warning: number, critical: n
   const topic = `elfreeze/${deviceId}/config`;
   const payload = JSON.stringify({ warning, critical });
   console.log(`[MQTT] Publishing to ${topic}: ${payload}`);
-  c.publish(topic, payload, { qos: 1 });
+  c.publish(topic, payload, { qos: 0, retain: true });
 }

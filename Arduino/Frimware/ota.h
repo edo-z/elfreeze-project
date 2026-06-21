@@ -38,7 +38,10 @@ static String extractJsonValue(const char* json, const char* key) {
 // PUSH OTA — MQTT handler
 // -------------------------------------------------------------
 void otaMessageHandler(String &topic, String &payload) {
-    if (!topic.endsWith("/ota")) return;
+    if (!topic.endsWith("/ota")) {
+        handleConfigMessage(topic, payload);
+        return;
+    }
 
     pendingUrl = extractJsonValue(payload.c_str(), "url");
     pendingMd5 = extractJsonValue(payload.c_str(), "md5");

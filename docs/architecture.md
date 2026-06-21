@@ -46,7 +46,11 @@ Temperature monitoring dashboard: ESP32-S3 with DS18B20 → MQTT over WSS → EM
                               alarm.h (buzzer pattern changes)
 ```
 
-Thresholds set in dashboard are debounced (500ms) then pushed to ESP32 via MQTT. The MQTT publisher connects from Next.js directly to EMQX on `localhost:1883` (TCP, no Cloudflare). ESP32 subscribes to `elfreeze/{deviceId}/config` and updates `configWarning` / `configCritical` variables on receipt. Buzzer behavior changes dynamically without reboot.
+Thresholds set in dashboard are pushed to ESP32 via MQTT on explicit **Save** button click (not auto-debounce). The MQTT publisher connects from Next.js to EMQX on `localhost:1883` (TCP, no Cloudflare) and publishes with `{ qos: 0, retain: true }`. Using `retain: true` ensures the ESP32 always receives the latest setpoint on every reconnect + subscribe — even if the message was published while the ESP32 was offline (clean session, no persistent subscriptions).
+
+ESP32 subscribes to `elfreeze/{deviceId}/config` and updates `configWarning` / `configCritical` on receipt. Callback is handled by `otaMessageHandler` which chains non-OTA topics to `handleConfigMessage()` — preventing the OTA setup from overwriting the config handler.
+
+Buzzer behavior changes dynamically without reboot.
 
 ## MQTT Transport Architecture
 
@@ -76,6 +80,7 @@ Key design decisions:
 - GET `/api/sensor/readings`: returns full buffer as JSON array
 - No database — data lives only in memory (lost on server restart)
 - Also extracts `deviceId` from incoming data and stores in `last-device.ts` for config routing
+- Browser fetches deviceId via `GET /api/device/last` (not directly from `last-device.ts` module, because `"use client"` components load a separate module instance)
 
 ## Chart Rendering
 - **Downsampling:** `downsampleReadings()` caps chart data to ~60 points by averaging suhu within equal-sized buckets. Prevents chart bloat (288 → solid red blob at 2px/pt).
@@ -117,7 +122,8 @@ src/
 │   └── api/
 │       ├── sensor/mqtt/    # POST — receive data from EMQX
 │       ├── sensor/readings/# GET — ring buffer
-│       └── device/config/  # POST — push thresholds to ESP32
+│       ├── device/config/  # POST — push thresholds to ESP32
+│       └── device/last/    # GET — last seen deviceId (bridge server→client)
 ├── components/   # UI components
 ├── lib/
 │   ├── ring-buffer.ts      # In-memory data store

@@ -78,7 +78,9 @@ if [ $? -eq 0 ]; then
             echo " "
             echo "---------------------------------------"
             
-            arduino-cli monitor -p $PORT --config baudrate=$BAUD
+            LOG_FILE="serial-$(date +%Y%m%d-%H%M%S).log"
+            echo "[LOG] Recording to $LOG_FILE"
+            arduino-cli monitor -p $PORT --config baudrate=$BAUD | tee "$LOG_FILE"
             
         else        
             echo "---------------------------------------"

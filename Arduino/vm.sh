@@ -15,7 +15,9 @@ if [ $? -eq 0 ]; then
     # echo "Uploading via OTA to $IP..."
     # arduino-cli upload -p $COM --fqbn $FQBN --config baudrate=115200 .
     # arduino-cli upload -p $IP --fqbn $FQBN --upload-field password=$PW .
-    arduino-cli monitor -p $COM --config baudrate=115200
+    LOG_FILE="serial-$(date +%Y%m%d-%H%M%S).log"
+    echo "[LOG] Recording to $LOG_FILE"
+    arduino-cli monitor -p $COM --config baudrate=115200 | tee "$LOG_FILE"
 else
     echo "Compilation failed. Upload aborted."
 fi

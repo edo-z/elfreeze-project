@@ -210,6 +210,10 @@ void sendMqttPing() {
 void handleMqttPacket(uint8_t* data, size_t len) {
     if (len < 2) return;
     uint8_t type = data[0] & 0xF0;
+    Serial.print("[MQTT] RX type=0x");
+    Serial.print(type, HEX);
+    Serial.print(" len=");
+    Serial.println(len);
 
     switch (type) {
         case 0x20: {
@@ -240,6 +244,7 @@ void handleMqttPacket(uint8_t* data, size_t len) {
 
             String topic = String((char*)&data[pos], tLen);
             pos += tLen;
+            if ((data[0] & 0x06) >> 1 >= 1) pos += 2;
             String payload = String((char*)&data[pos], len - pos);
 
             if (mqttCallback) {
@@ -261,6 +266,7 @@ void processWsData() {
 
     while (mqttWsClient.available()) {
         if (rxPos >= sizeof(rxBuf)) {
+            Serial.println("[WS] BUFFER OVERFLOW!");
             rxPos = 0;
         }
         rxBuf[rxPos++] = mqttWsClient.read();
@@ -456,6 +462,8 @@ void subscribeOTATopic() {
 void subscribeConfigTopic() {
     String deviceId = getDeviceId();
     String topic = String(TOPIC_PREFIX) + "/" + deviceId + "/config";
+    Serial.print("[SUBSCRIBE] ");
+    Serial.println(topic);
     subscribeMQTT(topic.c_str(), 0);
 }
 
@@ -472,7 +480,10 @@ void handleConfigMessage(String &topic, String &payload) {
         float val = payload.substring(payload.indexOf(':', cIdx) + 1).toFloat();
         configCritical = val;
     }
-    Serial.printf("[CONFIG] warning=%.1f critical=%.1f\n", configWarning, configCritical);
+    Serial.print("[CONFIG] warning=");
+    Serial.print(configWarning);
+    Serial.print(" critical=");
+    Serial.println(configCritical);
 }
 
 #endif

@@ -24,3 +24,13 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Dashboard presents temperature data via MCP protocol
 - MCP architecture TBD — may connect to an MCP server serving temperature data
 - Uses `@modelcontextprotocol/inspector` for MCP server development/testing
+
+## Current State (2026-06-21)
+- Dashboard renders with live temperature data, stat cards, charts, readings table
+- Threshold inputs with Save button push config to ESP32 via MQTT with retain:true
+- Config flow verified working: Save → POST /api/device/config → mqtt-publisher → EMQX → ESP32
+- ESP32 firmware has: MQTT via raw WiFiClientSecure + WebSocket, OTA pull, dynamic thresholds
+- **Known issue:** DS18B20 reads -127°C (sensor not detected on GPIO4), random fallback active
+- **Known issue:** OTA upload via IP fails ("could not open port"), always falls back to serial
+- **Known issue:** DeviceId cleared on server restart, page needs ~10s to recapture
+- System runs in production mode (npm run start) behind Cloudflare tunnel
