@@ -54,12 +54,12 @@ export default function ChartOverview({
   return (
     <div className="rounded-[8px] border border-[#E5E7EB] bg-white p-3 shadow-subtle">
       <div className="flex items-center justify-between">
-        <p className="font-body text-[10px] font-semibold uppercase tracking-[0.06em] text-[#9CA3AF]">
+        <p className="font-body text-[11px] font-bold uppercase tracking-[0.06em] text-[#6B7280]">
           Temperature Trend
         </p>
-        <Activity className="size-3 text-[#9CA3AF]" />
+        <Activity className="size-3.5 text-[#9CA3AF]" />
       </div>
-      <div className="mt-3 h-[250px]">
+      <div className="mt-3 h-[400px]">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 14, right: 0, left: -18, bottom: 0 }}>
             <defs>
@@ -101,7 +101,7 @@ export default function ChartOverview({
               dataKey="suhu"
               name="Temperature"
               stroke="#EF4444"
-              strokeWidth={1.5}
+              strokeWidth={2.5}
               fill="url(#ov-grad-suhu)"
               dot={false}
               activeDot={{ r: 3, strokeWidth: 0, fill: "#EF4444" }}

@@ -1,12 +1,10 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { X, Loader2, Check, AlertCircle } from "lucide-react";
-import Sidebar from "@/components/sidebar";
+import { Loader2, Check, AlertCircle } from "lucide-react";
 import Header from "@/components/header";
 import StatCard from "@/components/stat-card";
 import ChartOverview from "@/components/chart-overview";
-import ChartComparison from "@/components/chart-comparison";
 import ReadingsTable from "@/components/readings-table";
 import { fetchReadings, generateMockReadings, type TempReading } from "@/lib/temperature-data";
 
@@ -17,7 +15,6 @@ function computeTrend(a: number, b: number): "up" | "down" | "neutral" {
 }
 
 export default function Home() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [readings, setReadings] = useState<TempReading[]>([]);
   const [thresholdWarning, setThresholdWarning] = useState(35);
   const [thresholdCritical, setThresholdCritical] = useState(38);
@@ -120,22 +117,8 @@ export default function Home() {
 
   return (
     <div className="flex min-h-screen bg-[#F3F4F6]">
-      <Sidebar />
-
-      {/* Mobile drawer overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 md:hidden">
-          <div className="absolute inset-0 bg-black/30" onClick={() => setMobileMenuOpen(false)} />
-          <div className="relative z-50 w-[260px] animate-slide-up">
-            <div className="flex h-full min-h-screen">
-              <Sidebar />
-            </div>
-          </div>
-        </div>
-      )}
-
       <div className="flex flex-1 flex-col">
-        <Header onMenuToggle={() => setMobileMenuOpen(!mobileMenuOpen)} />
+        <Header />
 
         <main className="flex-1 overflow-auto">
           <div className="mx-auto w-full max-w-[1700px] px-4 py-5 md:px-6 md:py-6">
@@ -209,12 +192,9 @@ export default function Home() {
             </div>
 
             {/* Charts row */}
-            <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-2">
+            <div className="mt-4">
               <div className="animate-slide-up" style={{ animationDelay: "100ms" }}>
                 <ChartOverview data={readings} thresholdWarning={thresholdWarning} thresholdCritical={thresholdCritical} />
-              </div>
-              <div className="animate-slide-up" style={{ animationDelay: "200ms" }}>
-                <ChartComparison data={readings} thresholdWarning={thresholdWarning} thresholdCritical={thresholdCritical} />
               </div>
             </div>
 

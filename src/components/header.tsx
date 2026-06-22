@@ -1,21 +1,11 @@
 "use client";
 
-import { Bell, CalendarDays, Search, Menu } from "lucide-react";
+import { Bell, CalendarDays, Search } from "lucide-react";
 
-interface HeaderProps {
-  onMenuToggle?: () => void;
-}
-
-export default function Header({ onMenuToggle }: HeaderProps) {
+export default function Header() {
   return (
     <header className="flex w-full items-center justify-between border-b border-[#E5E7EB] bg-white px-4 py-3 md:px-6 md:py-3">
       <div className="flex items-center gap-3">
-        <button
-          onClick={onMenuToggle}
-          className="-ml-1 flex size-8 items-center justify-center rounded-lg text-[#6B7280] hover:bg-[#F3F4F6] md:hidden"
-        >
-          <Menu className="size-4" />
-        </button>
         <nav className="flex items-center gap-1.5 font-body text-[13px] text-[#9CA3AF]">
           <a href="#" className="hover:text-[#374151]">Dashboard</a>
           <span className="text-[#E5E7EB]">/</span>
